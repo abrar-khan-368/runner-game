@@ -1041,8 +1041,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   controller: {fileID: 3839043208949643987}
   moveSpeed: 10
-  jumpSpeed: 10
-  shiftingOfLane: 2
+  jumpSpeed: 7
+  shiftingOfLane: 3
   animator: {fileID: 3839043208940332298}
 --- !u!114 &1603060963
 MonoBehaviour:
@@ -1056,6 +1056,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac70784149e194be3829b88c69701007, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxSwipeTime: 0.5
+  minSwipeDistance: 200
+  DEADZONE: 50
+  SwipeUp: 0
+  SwipeDown: 0
+  SwipeLeft: 0
+  SwipeRight: 0
 --- !u!1 &3839043208949541032
 GameObject:
   m_ObjectHideFlags: 0

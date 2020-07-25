@@ -7,7 +7,6 @@ public class GameManagerTemp : MonoBehaviour
 {
 
     [SerializeField] private PlayerController player;
-    [SerializeField] private CameraController camera;
     [SerializeField] private GameObject countDown;
     [SerializeField] private UnityEngine.UI.Text countDownText;
     [SerializeField] private GameObject startButton;
@@ -16,7 +15,6 @@ public class GameManagerTemp : MonoBehaviour
     {
         player.enabled = false;
         countDown.SetActive(false);
-        camera.enabled = false;
     }
 
     public void RestartGame()
@@ -48,7 +46,6 @@ public class GameManagerTemp : MonoBehaviour
         yield return new WaitForSecondsRealtime(0.5f);
         countDown.SetActive(false);
         player.enabled = true;
-        camera.enabled = true;
     }
 
 }

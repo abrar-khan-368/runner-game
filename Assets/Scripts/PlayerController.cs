@@ -14,9 +14,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Animator animator;
 
     private int lane = 1;
-    private float gravity = 20f;
+    private float gravity = 10f;
     private Vector3 jumpDirection = Vector3.zero;
     private bool grounded = true;
+    private bool canDoDoubleJump = false;
 
     private const int LEFT = 0;
     private const int RIGHT = 2;
@@ -55,6 +56,20 @@ public class PlayerController : MonoBehaviour
             SwipeInputs.instance.SwipeDown = false;
             SlidingStarted();
             Invoke("SlidingStopped", 1f);
+        }
+
+        if (grounded && (Input.GetKeyDown(KeyCode.Return)) || SwipeInputs.instance.SingleTap)
+        {
+            SwipeInputs.instance.SingleTap = false;
+            Punch();
+            Invoke("DePunch", 1f);
+        }
+
+        if (grounded && (Input.GetKeyDown(KeyCode.K)) || SwipeInputs.instance.DoubleTap)
+        {
+            SwipeInputs.instance.DoubleTap = false;
+            Kick();
+            Invoke("DeKick", 1f);
         }
 
         Vector3 targetPosition = transform.position.z * Vector3.forward;
@@ -104,9 +119,19 @@ public class PlayerController : MonoBehaviour
         {
             SwipeInputs.instance.SwipeUp = false;
             jumpDirection.y = jumpSpeed;
+            canDoDoubleJump = true;
+        }
+        else
+        {
+            if (canDoDoubleJump && (Input.GetKeyDown(KeyCode.Space) || SwipeInputs.instance.SwipeUp))
+            {
+                canDoDoubleJump = false;
+                SwipeInputs.instance.SwipeUp = false;
+                jumpDirection.y = jumpSpeed;
+            }
         }
 
-        if (jumpDirection.y >= jumpSpeed)
+        if (jumpDirection.y >= jumpSpeed / 2)
         {
             animator.SetBool("hasJump", true);
         }
@@ -128,6 +153,26 @@ public class PlayerController : MonoBehaviour
     {
         animator.SetBool("isSliding", false);
         controller.height = controller.height * 2;
+    }
+
+    private void Punch()
+    {
+        animator.SetBool("punching", true);
+    }
+
+    private void DePunch()
+    {
+        animator.SetBool("punching", false);
+    }
+
+    private void Kick()
+    {
+        animator.SetBool("kicking", true);
+    }
+
+    private void DeKick()
+    {
+        animator.SetBool("kicking", false);
     }
 
     private void OnCollisionStay(Collision collision)
