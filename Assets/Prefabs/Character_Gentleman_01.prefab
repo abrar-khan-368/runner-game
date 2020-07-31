@@ -1040,9 +1040,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controller: {fileID: 3839043208949643987}
-  moveSpeed: 10
+  moveSpeed: 6.2
   jumpSpeed: 7
-  shiftingOfLane: 3
+  shiftingOfLane: 3.4
   animator: {fileID: 3839043208940332298}
 --- !u!114 &1603060963
 MonoBehaviour:
@@ -1063,6 +1063,8 @@ MonoBehaviour:
   SwipeDown: 0
   SwipeLeft: 0
   SwipeRight: 0
+  DoubleTap: 0
+  SingleTap: 0
 --- !u!1 &3839043208949541032
 GameObject:
   m_ObjectHideFlags: 0
