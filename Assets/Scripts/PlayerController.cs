@@ -1,14 +1,25 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class PlayerController : MonoBehaviour
 {
     [Header("Player movement essential")]
     [SerializeField] private CharacterController controller;
     [SerializeField] private float moveSpeed = 10f;
+    [SerializeField] private float turnSpeed = 20f;
+    [Range(1, 3)]
+    [SerializeField] private float moveSpeedMultiplier = 1.2f;
+    [SerializeField] private float maxMoveSpeed = 25f;
+
+    [SerializeField] private float mileStoneCount = 0;
+    [SerializeField] private float incrementMileStoneBy = 100f;
+
     [SerializeField] private float jumpSpeed;
     [SerializeField] private float shiftingOfLane = 3.0f;
+
+    [SerializeField] private TextMeshProUGUI scoreText;
 
     [Header("Player Animator")]
     [SerializeField] private Animator animator;
@@ -22,6 +33,9 @@ public class PlayerController : MonoBehaviour
     private const int LEFT = 0;
     private const int RIGHT = 2;
 
+    [HideInInspector] public int coinCollected = 0;
+    [HideInInspector] public bool isDead = false;
+
     void Start()
     {
         controller = this.GetComponent<CharacterController>();
@@ -29,6 +43,18 @@ public class PlayerController : MonoBehaviour
     
     void Update()
     {
+        if (moveSpeed <= maxMoveSpeed)
+        {
+            if (transform.position.z >= incrementMileStoneBy)
+            {
+                mileStoneCount += incrementMileStoneBy;
+                incrementMileStoneBy += incrementMileStoneBy;
+                moveSpeed *= moveSpeedMultiplier;
+            }
+        }
+
+        scoreText.text = "SC " + (int)(transform.position.z / 2);
+
         Movement();
         Jump();
     }
@@ -85,9 +111,12 @@ public class PlayerController : MonoBehaviour
         }
 
         Vector3 moveVector = Vector3.zero;
-        moveVector.x = (targetPosition - transform.position).normalized.x * moveSpeed;
+        
+        moveVector.x = (targetPosition - transform.position).x * turnSpeed;
         moveVector.y = 0f;
         moveVector.z = moveSpeed;
+
+        
 
         controller.Move(moveVector * Time.deltaTime);
 
@@ -183,6 +212,36 @@ public class PlayerController : MonoBehaviour
     private void OnCollisionExit(Collision collision)
     {
         grounded = false;   
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Obstacle"))
+        {
+            Debug.Log("Obstacle");
+            animator.enabled = false;
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.gameObject.CompareTag("Obstacle"))
+        {
+            animator.enabled = false;
+            moveSpeed = 0f;
+            isDead = true;
+        }
+
+        if (other.gameObject.CompareTag("Coin"))
+        {
+            if (!isDead)
+            {
+                coinCollected += 1;
+                Destroy(other.gameObject);
+                FindObjectOfType<SoundManager>().PlayCoinCollectSound();
+            }
+        }
+
     }
 
 }
