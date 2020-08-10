@@ -17,6 +17,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float incrementMileStoneBy = 100f;
 
     [SerializeField] private float jumpSpeed;
+    [SerializeField] private float doubleJumpSpeed;
     [SerializeField] private float shiftingOfLane = 3.0f;
 
     [SerializeField] private TextMeshProUGUI scoreText;
@@ -156,7 +157,7 @@ public class PlayerController : MonoBehaviour
             {
                 canDoDoubleJump = false;
                 SwipeInputs.instance.SwipeUp = false;
-                jumpDirection.y = jumpSpeed;
+                jumpDirection.y += doubleJumpSpeed;
             }
         }
 
@@ -220,6 +221,7 @@ public class PlayerController : MonoBehaviour
         {
             Debug.Log("Obstacle");
             animator.enabled = false;
+            isDead = true;
         }
     }
 
@@ -243,5 +245,4 @@ public class PlayerController : MonoBehaviour
         }
 
     }
-
 }
