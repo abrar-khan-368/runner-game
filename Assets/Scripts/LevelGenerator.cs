@@ -10,11 +10,14 @@ public class LevelGenerator : MonoBehaviour
     [SerializeField] private float safeZone;
     [SerializeField] private float amountOfTerrainOnScreen;
     [SerializeField] private float terrainLength;
+    [SerializeField] private bool fetchTerrainSequentially = false;
 
     private Vector3 terrainOffset;
     private GameObject lastSpawnTerrain;
     private int lastSpawnedIndex = 0;
     private float spawnZTerrain = 0;
+
+    private int counter = -1;
 
     List<GameObject> terrainsT = new List<GameObject>();
 
@@ -37,7 +40,12 @@ public class LevelGenerator : MonoBehaviour
 
     private void GenerateTerrain()
     {
-        lastSpawnTerrain = Instantiate(terrains[RandomTerrainFetcher()]) as GameObject;
+
+        if(!fetchTerrainSequentially)
+            lastSpawnTerrain = Instantiate(terrains[RandomTerrainFetcher()]) as GameObject;
+        else
+            lastSpawnTerrain = Instantiate(terrains[SequentialTerrainFetcher()]) as GameObject;
+
         lastSpawnTerrain.transform.SetParent(parentTerrain);
         spawnZTerrain += terrainOffset.z + terrainLength;
         lastSpawnTerrain.transform.SetPositionAndRotation(new Vector3(
@@ -58,6 +66,22 @@ public class LevelGenerator : MonoBehaviour
         }
         lastSpawnedIndex = x;
         return lastSpawnedIndex;
+
+    }
+
+    private int SequentialTerrainFetcher()
+    {
+        if (terrains.Length <= 1)
+            return 0;
+
+        ++counter;
+
+        if (counter < 0)
+            counter = -1;
+        else if (counter >= terrains.Length)
+            counter = 0;
+
+        return counter;
 
     }
 

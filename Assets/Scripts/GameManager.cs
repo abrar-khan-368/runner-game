@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject pauseGameCanvas;
     [SerializeField] private GameObject gameOverCanvas;
     [SerializeField] private AudioSource backgroundThemeMusic;
+    [SerializeField] private CurvedWorld curvedWorld;
 
     private bool played = false;
 
@@ -29,7 +30,7 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        coinText.text = "GC " + playerController.coinCollected;
+        coinText.text = "" + playerController.coinCollected;
 
         if (playerController.isDead && !played)
         {
@@ -56,11 +57,13 @@ public class GameManager : MonoBehaviour
 
     IEnumerator GameOver()
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(3f);
         played = true;
         gameOverCanvas.SetActive(true);
         Time.timeScale = 0f;
     }
+
+    
 
     public void PauseGame()
     {

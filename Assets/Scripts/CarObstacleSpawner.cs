@@ -5,57 +5,26 @@ using UnityEngine;
 public class CarObstacleSpawner : MonoBehaviour
 {
 
-    [SerializeField] private Transform[] pointsForSpawning;
-    [SerializeField] private float rateOfSpawning;
+    [SerializeField] private Transform pointOfSpawn;    
 
     [SerializeField] private GameObject[] carObjectList;
 
-    private float lastSpawnTime = 0f;
-
-    private int lastSpawningPoint = 0;
     private int lastCarObjectSpawnIndex = 0;
-    private List<GameObject> spawnedCarList = new List<GameObject>();
 
-    void Update()
+    [HideInInspector] public GameObject car;
+
+    private void Start()
     {
-        if (FindObjectOfType<PlayerController>().enabled)
-        {
-            if (Time.time > rateOfSpawning + lastSpawnTime)
-            {
-                SpawnCar();
-            }
-
-            if (Time.time > rateOfSpawning + (lastSpawnTime * 2))
-                DestroyCar();
-
-        }
+        SpawnCar();
     }
 
     private void SpawnCar()
     {
-        int pointIndex = GenerateIndexForSpawnPoint();
         int carIndex = GenerateIndexForCarObject();
         Debug.Log("carIndex ; " + carIndex);
-        GameObject @car = Instantiate(carObjectList[carIndex], pointsForSpawning[pointIndex].transform.position, Quaternion.identity);
+        car = Instantiate(carObjectList[carIndex], pointOfSpawn.transform.position, Quaternion.identity);
 
         car.transform.eulerAngles = new Vector3(car.transform.rotation.x, 180f, car.transform.rotation.z);
-        spawnedCarList.Add(car);
-        lastSpawnTime = Time.time;
-    }
-
-    private int GenerateIndexForSpawnPoint()
-    {
-        if (pointsForSpawning.Length <= 1)
-            return 0;
-
-        int x = lastSpawningPoint;
-        while (x == lastSpawningPoint)
-        {
-            x = Random.Range(0, pointsForSpawning.Length);
-        }
-
-        lastSpawningPoint = x;
-        return lastSpawningPoint;
     }
 
     private int GenerateIndexForCarObject()
@@ -71,12 +40,4 @@ public class CarObstacleSpawner : MonoBehaviour
         lastCarObjectSpawnIndex = x;
         return lastCarObjectSpawnIndex;
     }
-
-    private void DestroyCar()
-    {
-        Destroy(spawnedCarList[0], 5f);
-        spawnedCarList.RemoveAt(0);
-        lastSpawnTime = Time.time;
-    }
-
 }

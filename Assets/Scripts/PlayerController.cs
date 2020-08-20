@@ -26,10 +26,13 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Animator animator;
 
     private int lane = 1;
-    private float gravity = 10f;
+    private float gravity = 20f;
+    private float verticalVelocity = 0f;
     private Vector3 jumpDirection = Vector3.zero;
     private bool grounded = true;
     private bool canDoDoubleJump = false;
+
+    Vector3 moveVector = Vector3.zero;
 
     private const int LEFT = 0;
     private const int RIGHT = 2;
@@ -50,11 +53,11 @@ public class PlayerController : MonoBehaviour
             {
                 mileStoneCount += incrementMileStoneBy;
                 incrementMileStoneBy += incrementMileStoneBy;
-                moveSpeed *= moveSpeedMultiplier;
+                moveSpeed += moveSpeedMultiplier;
             }
         }
 
-        scoreText.text = "SC " + (int)(transform.position.z / 2);
+        scoreText.text = "" + (int)(transform.position.z / 2);
 
         Movement();
         Jump();
@@ -85,19 +88,19 @@ public class PlayerController : MonoBehaviour
             Invoke("SlidingStopped", 1f);
         }
 
-        if (grounded && (Input.GetKeyDown(KeyCode.Return)) || SwipeInputs.instance.SingleTap)
-        {
-            SwipeInputs.instance.SingleTap = false;
-            Punch();
-            Invoke("DePunch", 1f);
-        }
+        //if (grounded && (Input.GetKeyDown(KeyCode.Return)) || SwipeInputs.instance.SingleTap)
+        //{
+        //    SwipeInputs.instance.SingleTap = false;
+        //    Punch();
+        //    Invoke("DePunch", 1f);
+        //}
 
-        if (grounded && (Input.GetKeyDown(KeyCode.K)) || SwipeInputs.instance.DoubleTap)
-        {
-            SwipeInputs.instance.DoubleTap = false;
-            Kick();
-            Invoke("DeKick", 1f);
-        }
+        //if (grounded && (Input.GetKeyDown(KeyCode.K)) || SwipeInputs.instance.DoubleTap)
+        //{
+        //    SwipeInputs.instance.DoubleTap = false;
+        //    Kick();
+        //    Invoke("DeKick", 1f);
+        //}
 
         Vector3 targetPosition = transform.position.z * Vector3.forward;
 
@@ -111,10 +114,10 @@ public class PlayerController : MonoBehaviour
                 break;
         }
 
-        Vector3 moveVector = Vector3.zero;
+       
         
         moveVector.x = (targetPosition - transform.position).x * turnSpeed;
-        moveVector.y = 0f;
+        moveVector.y = verticalVelocity;
         moveVector.z = moveSpeed;
 
         
@@ -147,21 +150,35 @@ public class PlayerController : MonoBehaviour
     {
         if(controller.isGrounded && (Input.GetKeyDown(KeyCode.Space) || SwipeInputs.instance.SwipeUp))
         {
-            SwipeInputs.instance.SwipeUp = false;
-            jumpDirection.y = jumpSpeed;
-            canDoDoubleJump = true;
+            if (Input.GetKeyDown(KeyCode.Space) || SwipeInputs.instance.SwipeUp)
+            {
+                SwipeInputs.instance.SwipeUp = false;
+                verticalVelocity = jumpSpeed;
+                canDoDoubleJump = true;
+            }
         }
         else
         {
-            if (canDoDoubleJump && (Input.GetKeyDown(KeyCode.Space) || SwipeInputs.instance.SwipeUp))
+            //if (canDoDoubleJump && (Input.GetKeyDown(KeyCode.Space) || SwipeInputs.instance.SwipeUp))
+            //{
+            //    canDoDoubleJump = false;
+            //    SwipeInputs.instance.SwipeUp = false;
+            //    verticalVelocity = doubleJumpSpeed;
+            //}
+            //else
+            //{
+            //    verticalVelocity -= (gravity * Time.deltaTime);
+            //}
+
+            verticalVelocity -= (gravity * Time.deltaTime);
+            if (Input.GetKeyDown(KeyCode.S) || SwipeInputs.instance.SwipeDown)
             {
-                canDoDoubleJump = false;
-                SwipeInputs.instance.SwipeUp = false;
-                jumpDirection.y += doubleJumpSpeed;
+                verticalVelocity -= jumpSpeed;
             }
+
         }
 
-        if (jumpDirection.y >= jumpSpeed / 2)
+        if (!controller.isGrounded)
         {
             animator.SetBool("hasJump", true);
         }
@@ -169,20 +186,22 @@ public class PlayerController : MonoBehaviour
         {
             animator.SetBool("hasJump", false);
         }
-        jumpDirection.y -= gravity * Time.deltaTime;
-        controller.Move(jumpDirection * Time.deltaTime);
+        //jumpDirection.y -= gravity * Time.deltaTime;
+        //controller.Move(jumpDirection * Time.deltaTime);
     }
 
     private void SlidingStarted()
     {
         animator.SetBool("isSliding", true);
         controller.height = controller.height / 2;
+        verticalVelocity = 0.3f;
     }
 
     private void SlidingStopped()
     {
         animator.SetBool("isSliding", false);
         controller.height = controller.height * 2;
+        verticalVelocity = 0f;
     }
 
     private void Punch()
@@ -220,7 +239,7 @@ public class PlayerController : MonoBehaviour
         if (collision.gameObject.CompareTag("Obstacle"))
         {
             Debug.Log("Obstacle");
-            animator.enabled = false;
+            animator.SetTrigger("dead");
             isDead = true;
         }
     }
@@ -229,7 +248,7 @@ public class PlayerController : MonoBehaviour
     {
         if(other.gameObject.CompareTag("Obstacle"))
         {
-            animator.enabled = false;
+            animator.SetTrigger("dead");
             moveSpeed = 0f;
             isDead = true;
         }
