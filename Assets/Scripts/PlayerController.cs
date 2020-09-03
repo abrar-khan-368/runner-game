@@ -28,9 +28,7 @@ public class PlayerController : MonoBehaviour
     private int lane = 1;
     private float gravity = 20f;
     private float verticalVelocity = 0f;
-    private Vector3 jumpDirection = Vector3.zero;
     private bool grounded = true;
-    private bool canDoDoubleJump = false;
 
     Vector3 moveVector = Vector3.zero;
 
@@ -88,20 +86,6 @@ public class PlayerController : MonoBehaviour
             Invoke("SlidingStopped", 1f);
         }
 
-        //if (grounded && (Input.GetKeyDown(KeyCode.Return)) || SwipeInputs.instance.SingleTap)
-        //{
-        //    SwipeInputs.instance.SingleTap = false;
-        //    Punch();
-        //    Invoke("DePunch", 1f);
-        //}
-
-        //if (grounded && (Input.GetKeyDown(KeyCode.K)) || SwipeInputs.instance.DoubleTap)
-        //{
-        //    SwipeInputs.instance.DoubleTap = false;
-        //    Kick();
-        //    Invoke("DeKick", 1f);
-        //}
-
         Vector3 targetPosition = transform.position.z * Vector3.forward;
 
         switch (lane)
@@ -154,22 +138,10 @@ public class PlayerController : MonoBehaviour
             {
                 SwipeInputs.instance.SwipeUp = false;
                 verticalVelocity = jumpSpeed;
-                canDoDoubleJump = true;
             }
         }
         else
         {
-            //if (canDoDoubleJump && (Input.GetKeyDown(KeyCode.Space) || SwipeInputs.instance.SwipeUp))
-            //{
-            //    canDoDoubleJump = false;
-            //    SwipeInputs.instance.SwipeUp = false;
-            //    verticalVelocity = doubleJumpSpeed;
-            //}
-            //else
-            //{
-            //    verticalVelocity -= (gravity * Time.deltaTime);
-            //}
-
             verticalVelocity -= (gravity * Time.deltaTime);
             if (Input.GetKeyDown(KeyCode.S) || SwipeInputs.instance.SwipeDown)
             {
@@ -202,26 +174,6 @@ public class PlayerController : MonoBehaviour
         animator.SetBool("isSliding", false);
         controller.height = controller.height * 2;
         verticalVelocity = 0f;
-    }
-
-    private void Punch()
-    {
-        animator.SetBool("punching", true);
-    }
-
-    private void DePunch()
-    {
-        animator.SetBool("punching", false);
-    }
-
-    private void Kick()
-    {
-        animator.SetBool("kicking", true);
-    }
-
-    private void DeKick()
-    {
-        animator.SetBool("kicking", false);
     }
 
     private void OnCollisionStay(Collision collision)

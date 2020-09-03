@@ -1141,7 +1141,7 @@ CharacterController:
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0.9, z: 0}
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!114 &2595431233431174477
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1161,8 +1161,8 @@ MonoBehaviour:
   maxMoveSpeed: 25
   mileStoneCount: 0
   incrementMileStoneBy: 350
-  jumpSpeed: 6
-  doubleJumpSpeed: 8
+  jumpSpeed: 10
+  doubleJumpSpeed: 15
   shiftingOfLane: 3.5
   scoreText: {fileID: 0}
   animator: {fileID: 4808775614519426378}

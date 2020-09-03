@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class LevelGenerator : MonoBehaviour
 {
-    [SerializeField] private GameObject[] terrains;
+    [SerializeField] private Transform[] terrains;
     [SerializeField] private Transform player;
     [SerializeField] private Transform parentTerrain;
     [SerializeField] private float safeZone;
@@ -13,13 +13,13 @@ public class LevelGenerator : MonoBehaviour
     [SerializeField] private bool fetchTerrainSequentially = false;
 
     private Vector3 terrainOffset;
-    private GameObject lastSpawnTerrain;
+    private Transform lastSpawnTerrain;
     private int lastSpawnedIndex = 0;
     private float spawnZTerrain = 0;
 
     private int counter = -1;
 
-    List<GameObject> terrainsT = new List<GameObject>();
+    List<Transform> terrainsT = new List<Transform>();
 
     private void Start()
     {
@@ -42,9 +42,9 @@ public class LevelGenerator : MonoBehaviour
     {
 
         if(!fetchTerrainSequentially)
-            lastSpawnTerrain = Instantiate(terrains[RandomTerrainFetcher()]) as GameObject;
+            lastSpawnTerrain = Instantiate(terrains[RandomTerrainFetcher()]) as Transform;
         else
-            lastSpawnTerrain = Instantiate(terrains[SequentialTerrainFetcher()]) as GameObject;
+            lastSpawnTerrain = Instantiate(terrains[SequentialTerrainFetcher()]) as Transform;
 
         lastSpawnTerrain.transform.SetParent(parentTerrain);
         spawnZTerrain += terrainOffset.z + terrainLength;
@@ -87,7 +87,7 @@ public class LevelGenerator : MonoBehaviour
 
     private void DestroySpawnedTerrain()
     {
-        Destroy(terrainsT[0]);
+        Destroy(terrainsT[0].gameObject);
         terrainsT.RemoveAt(0);
     }
 
